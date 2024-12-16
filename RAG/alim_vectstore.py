@@ -1,15 +1,14 @@
 from langchain.schema import Document
 import os
-import fitz
 import re
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 import streamlit as st  # Importe streamlit pour créer l'application web
-from ollama import Client
 from langchain_chroma import Chroma
 from typing import Tuple
+import fitz
 
 
 # Nettoyer le texte des documents en entrée, avant ce pouvoir réaliser
