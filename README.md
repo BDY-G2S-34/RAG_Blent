@@ -6,3 +6,5 @@ Ce projet consiste en la création d'un chatbot spécialisé sur des fichiers PD
 Il se base sur un RAG
 
 Une restitution / IHM en Streamlit permet d'exposer le llm
+
+Utilisation de Docker pour diffusion de notre application
