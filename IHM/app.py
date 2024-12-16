@@ -10,7 +10,12 @@ from langchain_huggingface import HuggingFaceEmbeddings
 import re
 from langchain_core.output_parsers import StrOutputParser
 from langchain_ollama import OllamaLLM
+from dotenv import load_dotenv
 
+# Récupération des token et autres clés
+import os
+load_dotenv()
+URL_OLLAMA = os.getenv("URL_OLLAMA")
 
 # Charger le modele d'embedding
 model_embed = HuggingFaceEmbeddings(model_name='intfloat/multilingual-e5-base')
@@ -67,7 +72,7 @@ retriever = db.as_retriever(
 
 llm = OllamaLLM(
     model='mistral',
-    base_url='https://7393-174-164-27-23.ngrok-free.app'   # or your Ollama server URL
+    base_url=URL_OLLAMA   # URL OLLAMA récupérée depuis le .env
 )
 
 llm_chain = prompt | llm | StrOutputParser()
@@ -114,10 +119,7 @@ def sources_reponse(reponse):
 
 ###########################
 # Création de l'appli Web
-
-
-# TODO : Remplacer par l'URL affichée dans Ngrok
-client = Client(host='https://7393-174-164-27-23.ngrok-free.app')
+#client = Client(host=URL_OLLAMA)
 
 # Définit le titre de l'application web
 st.title("Chatbot Ollama")

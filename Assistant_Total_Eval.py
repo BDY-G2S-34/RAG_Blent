@@ -1,56 +1,9 @@
-import subprocess
+# Récupération des token et autres clés
+from dotenv import load_dotenv
+import os
+load_dotenv()
+TOKEN_HF = os.getenv("TOKEN_HF")
 
-# Pour pouvoir dézipper le fichier
-commande = "apt-get install unzip"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-
-# Dézip des fichiers DIC transmis
-commande = "unzip DIC.zip"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-# Dézip des fichiers d'évaluation transmis
-commande = "unzip dataset_eval.zip"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-
-commande = "mkdir dataset_eval"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "mv *.json ./dataset_eval/"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-
-# Installation des librairies nécessaires
-commande = "pip install -qU langchain_community pypdf"   #Pour la lecture de documents PDF
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install jq"   #Lecture fichiers JSON
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install langchain-text-splitters"   #Pour découper les documents
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install langchain sentence-transformers"   #LangChain
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install langchain-huggingface"   #Embeddings
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install langchain-chroma"   #Base de données vectorielle retenue pour ce projet
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install bitsandbytes"   #Quantization
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install accelerate "
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install pandas"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install bert_score"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install pdfplumber"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install faiss-gpu"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install sentencepiece"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install fitz"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install frontend"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-commande = "pip install pymupdf"
-result = subprocess.run(commande, capture_output=False, text=True, shell=True)
-
-# Lire les documents
 
 ### Nettoyer le texte des documents
 
@@ -198,7 +151,7 @@ db = FAISS.from_texts(
 
 from huggingface_hub import login
 
-hf_token = "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"  # TODO: Coller ici le token Hugging Face
+hf_token = TOKEN_HF  # Token HuggingFace stocké dans le .env
 login(token=hf_token)
 
 import torch
