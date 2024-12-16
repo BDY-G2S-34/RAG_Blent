@@ -3,7 +3,7 @@ import os
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 import streamlit as st  # Importe streamlit pour créer l'application web
-from ollama import Client
+#from ollama import Client
 from langchain_chroma import Chroma
 from typing import Tuple
 from langchain_huggingface import HuggingFaceEmbeddings

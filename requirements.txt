@@ -1,18 +1,18 @@
-langchain_community
-jq   #Lecture fichiers JSON
-langchain-text-splitters   #Pour découper les documents
-langchain
-sentence-transformers   #LangChain
-langchain-huggingface   #Embeddings
-langchain-chroma   #Base de données vectorielle retenue pour ce projet
-bitsandbytes   #Quantization
-accelerate
-pandas
-bert_score
-sentencepiece
-frontend
-fitz
-streamlit
-ollama
-PyMuPDF
-python-dotenv
+langchain_community==0.3.12
+jq==1.8.0   #Lecture fichiers JSON
+langchain-text-splitters==0.3.3   #Pour découper les documents
+langchain==0.3.12
+sentence-transformers==3.3.1   #LangChain
+langchain-huggingface==0.1.2   #Embeddings
+langchain-chroma==0.1.4   #Base de données vectorielle retenue pour ce projet
+bitsandbytes==0.45.0   #Quantization
+accelerate==1.2.1
+pandas==2.2.3
+bert_score==0.3.13
+sentencepiece==0.2.0
+frontend==0.0.3
+fitz==0.0.1.dev2
+streamlit==1.41.1
+ollama==0.4.4
+PyMuPDF==1.25.1
+python-dotenv==1.0.1
