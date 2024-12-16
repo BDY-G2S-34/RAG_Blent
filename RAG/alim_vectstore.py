@@ -66,7 +66,7 @@ def extraction_metadata(texte: str) -> Tuple[str, str, int]:
     return produit, isin, niveau_risque
 
 
-repertoire = "./DIC"   # Répertoire où sont stockés les documents PDF à charger
+repertoire = "~/DIC"   # Répertoire où sont stockés les documents PDF à charger
 docs = []   # Initialisation de la liste des documents pdf chargés
 
 # Parcourir tous les fichiers du répertoire
