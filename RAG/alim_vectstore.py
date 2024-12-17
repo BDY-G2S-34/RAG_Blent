@@ -64,8 +64,8 @@ def extraction_metadata(texte: str) -> Tuple[str, str, int]:
 
     return produit, isin, niveau_risque
 
-
-repertoire = "~/DIC"   # Répertoire où sont stockés les documents PDF à charger
+workdirectory = os.getcwd() # répertoire de travail actuel
+repertoire = os.path.join(workdirectory, "DIC")   # Répertoire où sont stockés les documents PDF à charger
 docs = []   # Initialisation de la liste des documents pdf chargés
 
 # Parcourir tous les fichiers du répertoire
@@ -123,7 +123,7 @@ model_embed = HuggingFaceEmbeddings(model_name='intfloat/multilingual-e5-base')
 texts = [doc.page_content for doc in chunked_docs]
 metadatas = [doc.metadata for doc in chunked_docs]
 
-persist_directory = "~/db"
+persist_directory = os.path.join(workdirectory, "db")
 
 # Chargement des documents vectorisés dans la base Chroma, et sauvegarde en bdd persistante
 db = Chroma.from_documents(chunked_docs, model_embed, persist_directory = persist_directory)
