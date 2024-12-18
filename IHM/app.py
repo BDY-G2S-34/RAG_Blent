@@ -43,6 +43,7 @@ suivre les instructions entre <instructions></instructions>.
 <instructions>
 La REPONSE doit être concise et rédigée en Français.
 La REPONSE doit être basée sur le contexte entre <contexte></contexte>.
+la REPONSE doit préciser la <source> et le code <isin>.
 Si le contexte entre <contexte></contexte> ne permet pas de répondre à la
 question entre <question></question>, réponds "Je ne peux pas répondre à votre
 demande".
