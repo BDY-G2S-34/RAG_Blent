@@ -20,7 +20,7 @@ URL_OLLAMA = os.getenv("URL_OLLAMA")
 # Charger le modele d'embedding
 model_embed = HuggingFaceEmbeddings(model_name='intfloat/multilingual-e5-base')
 workdirectory = os.getcwd() # répertoire de travail actuel
-persist_directory = os.path.join(workdirectory, "RAG_Blent/db")
+persist_directory = os.path.join(workdirectory, "db")
 # Chargement de la base Chroma
 db = Chroma(persist_directory = persist_directory, embedding_function = model_embed)
 
