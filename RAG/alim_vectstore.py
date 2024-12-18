@@ -88,9 +88,9 @@ for nom_fichier in os.listdir(repertoire):
         produit, isin, niveau_risque = extraction_metadata(texte_nettoye)
         metadata = {
             'source': nom_fichier,
-            # 'produit': produit,
-            # 'isin': isin,
-            # 'niveau_risque': niveau_risque,
+            'produit': produit,
+            'isin': isin,
+            'niveau_risque': niveau_risque,
             # Ajoutez d'autres métadonnées ici si nécessaire
         }
         doc = Document(page_content=texte_nettoye, metadata=metadata)

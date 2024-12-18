@@ -106,7 +106,7 @@ def sources_reponse(reponse):
 
 # Reste à faire
 
-# Sourcer en utilisant les metadata du RAG
+# Sourcer en utilisant les metadatas du RAG
 
 # Mettre en place une mémoire, pas trop longue, pourquoi pas en utilisant
 # un résumé de l'historique de l'échange ou en limitant
