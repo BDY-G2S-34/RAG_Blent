@@ -6,10 +6,16 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 import streamlit as st  # Importe streamlit pour créer l'application web
-from langchain_chroma import Chroma
 from typing import Tuple
 import fitz
+from dotenv import load_dotenv
+from pinecone import Pinecone, ServerlessSpec
+from tqdm.auto import tqdm
 
+
+# Récupération des token et autres clés
+load_dotenv()
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
 # Nettoyer le texte des documents en entrée, avant ce pouvoir réaliser
 # les chunks et embeddings
@@ -115,16 +121,53 @@ splitter = RecursiveCharacterTextSplitter(
 # On découpe alors les documents
 chunked_docs = splitter.split_documents(docs)
 
-# Charger le modele d'embedding
-model_embed = HuggingFaceEmbeddings(model_name='intfloat/multilingual-e5-base')
 
-# Générer et sauvegarder les embeddings dans le vectorstore
-# (ChromaDB ou Faiss par ex.)
+# Création d'un index dans le cloud (servless)
+# La dimension doit être cohérente avec celle du modèle d'embedding
+pc = Pinecone(api_key=PINECONE_API_KEY)
+
+nom_index = "bvragblent"
+
+if nom_index not in pc.list_indexes():
+    pc.create_index(
+        name=nom_index,
+        dimension=768,
+        metric='cosine',
+        spec=ServerlessSpec(
+            cloud='aws',
+            region='us-east-1'
+        )
+    )
+
+# Instanciation d'un objet Index
+index = pc.Index(nom_index)
+
+from langchain_huggingface import HuggingFaceEmbeddings
+model_embed = HuggingFaceEmbeddings(
+    model_name="intfloat/multilingual-e5-base",    #"intfloat/multilingual-e5-large",
+    encode_kwargs={'normalize_embeddings': True}
+)
+
+# Préparer les données
 texts = [doc.page_content for doc in chunked_docs]
 metadatas = [doc.metadata for doc in chunked_docs]
 
-persist_directory = os.path.join(workdirectory, "db")
-
-# Chargement des documents vectorisés dans la base Chroma, et sauvegarde en bdd persistante
-db = Chroma.from_documents(chunked_docs, model_embed, persist_directory = persist_directory)
-db = None   # Permet de libérer la mémoire
+# Embedding des donées et insertion dans l'index Pinecone
+batch_size = 100
+for i in tqdm(range(0, len(texts), batch_size)):
+    batch_texts = texts[i:i + batch_size]
+    batch_metadata = metadatas[i:i + batch_size]
+    
+    embeddings = model_embed.embed_documents(batch_texts)
+    
+    vectors = []
+    for j, (text, embedding) in enumerate(zip(batch_texts, embeddings)):
+        metadata = batch_metadata[j]
+        metadata["page_content"] = text  # Ajout du contenu dans les métadonnées
+        vectors.append((
+            f"doc_{i+j}",
+            embedding,
+            metadata
+        ))
+    
+    index.upsert(vectors=vectors)
