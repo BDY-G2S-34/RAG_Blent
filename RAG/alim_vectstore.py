@@ -142,9 +142,9 @@ if nom_index not in pc.list_indexes():
 # Instanciation d'un objet Index
 index = pc.Index(nom_index)
 
-from langchain_huggingface import HuggingFaceEmbeddings
+# Import du modèle d'embedding
 model_embed = HuggingFaceEmbeddings(
-    model_name="intfloat/multilingual-e5-base",    #"intfloat/multilingual-e5-large",
+    model_name="intfloat/multilingual-e5-base",
     encode_kwargs={'normalize_embeddings': True}
 )
 
@@ -152,7 +152,7 @@ model_embed = HuggingFaceEmbeddings(
 texts = [doc.page_content for doc in chunked_docs]
 metadatas = [doc.metadata for doc in chunked_docs]
 
-# Embedding des donées et insertion dans l'index Pinecone
+# Embedding des données et insertion dans l'index Pinecone
 batch_size = 100
 for i in tqdm(range(0, len(texts), batch_size)):
     batch_texts = texts[i:i + batch_size]

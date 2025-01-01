@@ -11,18 +11,31 @@ import re
 from langchain_core.output_parsers import StrOutputParser
 from langchain_ollama import OllamaLLM
 from dotenv import load_dotenv
+from pinecone import Pinecone, ServerlessSpec
 
 # Récupération des token et autres clés
 import os
 load_dotenv()
 URL_OLLAMA = os.getenv("URL_OLLAMA")
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+workdirectory = os.getcwd() # répertoire de travail actuel
+
+# Import de l'index PINECONE depuis le cloud (servless)
+pc = Pinecone(api_key=PINECONE_API_KEY)
+nom_index = "bvragblent"
 
 # Charger le modele d'embedding
-model_embed = HuggingFaceEmbeddings(model_name='intfloat/multilingual-e5-base')
-workdirectory = os.getcwd() # répertoire de travail actuel
-persist_directory = os.path.join(workdirectory, "db")
-# Chargement de la base Chroma
-db = Chroma(persist_directory = persist_directory, embedding_function = model_embed)
+model_embed = HuggingFaceEmbeddings(
+    model_name="intfloat/multilingual-e5-base",
+    encode_kwargs={'normalize_embeddings': True}
+)
+
+# Instanciation du Vectorstore PINECONE
+pc = Pinecone.from_existing_index(
+    index_name=nom_index,
+    embedding=model_embed,
+    text_key="page_content"
+)
 
 prompt_template = """
 <role>
@@ -65,13 +78,6 @@ prompt = PromptTemplate(
     template=prompt_template,
 )
 
-# Construction du Retriever = chercher passages de documents
-# / à la similarité vectorielle
-retriever = db.as_retriever(
-    search_type="similarity",
-    search_kwargs={'k': 4}
-)
-
 llm = OllamaLLM(
     model='mistral',
     base_url=URL_OLLAMA   # URL OLLAMA récupérée depuis le .env
@@ -80,11 +86,8 @@ llm = OllamaLLM(
 llm_chain = prompt | llm | StrOutputParser()
 
 rag_chain = RunnablePassthrough.assign(
-    context=lambda x: retriever.get_relevant_documents(x["question"])
+    context=lambda x: pc.similarity_search(x["question"], k=4)
 ) | llm_chain
-
-# question = "Quels critères sont pris en compte dans les décisions
-# d'investissement du FCP ?"
 
 
 # Question en passant par le RAG
