@@ -21,7 +21,7 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 workdirectory = os.getcwd() # répertoire de travail actuel
 
 # Import de l'index PINECONE depuis le cloud (servless)
-pc = Pinecone(api_key=PINECONE_API_KEY)
+pinecone = Pinecone(api_key=PINECONE_API_KEY)
 nom_index = "bvragblent"
 
 # Charger le modele d'embedding
@@ -31,11 +31,16 @@ model_embed = HuggingFaceEmbeddings(
 )
 
 # Instanciation du Vectorstore PINECONE
-pc = Pinecone.from_existing_index(
-    index_name=nom_index,
-    embedding=model_embed,
-    text_key="page_content"
-)
+index = pinecone.Index(nom_index)
+
+################
+print(index.query(
+        top_k=4,  # Le nombre de résultats à renvoyer.
+        include_values=False,  # Ne pas inclure les vecteurs
+        include_metadata=True,  # Inclure les métadonnées
+        vector=model_embed.embed_query("Quel est l'âge du capitaine ?")
+    ))
+#################
 
 prompt_template = """
 <role>
@@ -86,15 +91,25 @@ llm = OllamaLLM(
 llm_chain = prompt | llm | StrOutputParser()
 
 rag_chain = RunnablePassthrough.assign(
-    context=lambda x: pc.similarity_search(x["question"], k=4)
+    context=lambda x: index.query(
+        top_k=4,  # Le nombre de résultats à renvoyer.
+        include_values=False,  # Ne pas inclure les vecteurs
+        include_metadata=True,  # Inclure les métadonnées
+        vector=model_embed.embed_query(x["question"])
+    )
 ) | llm_chain
 
 
 # Question en passant par le RAG
 def llm_rag_answer(question):
+    print(question)
     reponse = rag_chain.invoke({"question": question})
+    print("/n")
+    print(reponse)
     sources = sources_reponse(reponse)
+    print(sources)
     reponse_llm = reponse.split(":::")[-1].strip()
+    print(reponse_llm)
     return (reponse, reponse_llm, sources)
 
 
